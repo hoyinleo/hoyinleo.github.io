@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-Hant-HK">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0b3b36">
+    <meta name="description" content="Potato 的生日旅行。">
+    <meta property="og:title" content="Potato 的生日旅行">
+    <meta property="og:description" content="辦理登機手續，看看這個週末會帶我們去哪裡。">
+    <meta property="og:image" content="./assets/preview.jpg">
+    <title>給 Potato 🥔</title>
+    <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./styles.css">
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <main class="experience" data-state="loading">
+      <section class="invitation panel" aria-labelledby="invitation-title">
+        <div class="invitation__wash" aria-hidden="true"></div>
+        <div class="checkin-header" aria-label="出發資料">
+          <div><strong>HKG</strong><small>生日旅行 · 辦理登機</small></div>
+          <time datetime="2026-09-26">2026年9月26日</time>
+        </div>
+        <div class="invitation__content">
+          <h1 id="invitation-title">Potato，<br>準備好出發了嗎？ <span aria-hidden="true">🥔</span></h1>
+          <p class="invitation__message">三個城市，一個輕鬆週末。<br>讓緣分決定我們的目的地。</p>
+          <button class="primary-button" id="reveal-button" type="button">
+            <span>開始辦理登機</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+        <p class="invitation__footer">香港 · 1 位旅客</p>
+      </section>
+
+      <section class="shuffle panel" aria-labelledby="shuffle-title" aria-hidden="true">
+        <div class="shuffle__content">
+          <p class="eyebrow">正在辦理登機手續</p>
+          <h2 id="shuffle-title">正在選擇你的目的地</h2>
+          <div class="board" aria-hidden="true">
+            <span class="board__origin">HKG</span>
+            <span class="board__line"></span>
+            <span class="board__arrival" id="shuffle-code">ICN</span>
+          </div>
+          <p class="shuffle__city" id="shuffle-city">首爾</p>
+        </div>
+      </section>
+
+      <section class="reveal panel" aria-labelledby="reveal-title" aria-hidden="true">
+        <img class="reveal__photo" id="destination-photo" alt="">
+        <div class="reveal__shade" aria-hidden="true"></div>
+        <header class="reveal__header">
+          <strong>HKG</strong>
+          <p>生日旅行</p>
+        </header>
+
+        <div class="reveal__intro">
+          <p class="eyebrow">你的目的地</p>
+          <h2 id="reveal-title"><span id="destination-city">首爾</span><small id="destination-country">韓國</small></h2>
+          <p id="destination-line">霓虹夜色、安靜早晨，還有值得慢慢探索的街區。</p>
+        </div>
+
+        <article class="pass" id="itinerary" aria-label="生日旅行行程概覽">
+          <div class="pass__topline">
+            <div>
+              <span class="pass__label">旅客</span>
+              <strong>Potato 🥔</strong>
+            </div>
+            <span class="pass__status">行程概覽</span>
+          </div>
+          <div class="route">
+            <div><strong>HKG</strong><span>香港</span></div>
+            <div class="route__flight" aria-hidden="true"><span></span><b>✈</b><span></span></div>
+            <div class="route__arrival"><strong id="pass-code">ICN</strong><span id="pass-city">首爾</span></div>
+          </div>
+          <div class="pass__details">
+            <div><span class="pass__label">去程</span><strong>9月26日</strong></div>
+            <div><span class="pass__label">回程</span><strong>9月27日</strong></div>
+            <div><span class="pass__label">行程</span><strong>來回</strong></div>
+          </div>
+          <p class="pass__note">週末小旅行 · 航班詳情稍後公布</p>
+        </article>
+
+        <div class="actions">
+          <button class="action-button action-button--primary" id="plan-button" type="button" aria-expanded="false" aria-controls="city-plan">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18 3.5 21V6L9 3l6 3 5.5-3v15L15 21l-6-3Z"/><path d="M9 3v15M15 6v15"/></svg>
+            查看我們的城市行程
+          </button>
+        </div>
+
+        <section class="city-plan" id="city-plan" aria-labelledby="plan-title" hidden>
+          <header class="city-plan__header">
+            <p class="eyebrow">我們的週末路線</p>
+            <h2 id="plan-title"><span id="plan-city">首爾</span>，慢慢走就好。</h2>
+            <p>兩天，每天只去三個地方，隨時都可以改變主意。</p>
+          </header>
+          <div id="plan-days"></div>
+        </section>
+      </section>
+
+      <p class="sr-only" id="announcement" aria-live="polite"></p>
+    </main>
+    <noscript>這趟旅程需要 JavaScript。請在啟用 JavaScript 後使用 Safari 開啟。</noscript>
+  </body>
+</html>
