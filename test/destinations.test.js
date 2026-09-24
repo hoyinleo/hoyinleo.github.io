@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
 import test from "node:test";
 
 import {
@@ -51,6 +53,16 @@ test("stores the first choice and restores it without drawing again", () => {
   assert.equal(second.destination.key, "taipei");
   assert.equal(second.restored, true);
   assert.equal(draws, 1);
+});
+
+test("keeps the final asset names and richer trip metadata in sync", () => {
+  for (const destination of DESTINATIONS) {
+    assert.ok(destination.flight?.primary, `${destination.city} is missing a primary flight`);
+    assert.ok(destination.hotel_area, `${destination.city} is missing hotel details`);
+    assert.ok(destination.itinerary?.length >= 1, `${destination.city} is missing itinerary details`);
+    const assetPath = path.join(process.cwd(), destination.image.replace(/^\.?\//, ""));
+    assert.ok(fs.existsSync(assetPath), `${destination.city} image is missing: ${destination.image}`);
+  }
 });
 
 test("provides a relaxed two-day route with map links for every city", () => {

@@ -60,7 +60,15 @@ test("reveals once and restores the locked destination", async ({ page }) => {
 
   await page.getByRole("button", { name: "查看我們的城市行程" }).click();
   await expect(page.getByRole("heading", { name: /慢慢走就好/ })).toBeVisible();
-  await expect(page.getByRole("link", { name: "在地圖開啟第 1 天路線 ↗" })).toHaveAttribute("href", /^https:\/\/www\.google\.com\/maps\/dir\/\?/);
+  await expect(page.locator(".day-plan--stay")).toBeVisible();
+  await expect(page.locator(".itinerary-flight--departure")).toHaveAttribute("aria-label", "去程航班");
+  await expect(page.locator(".itinerary-flight--return")).toHaveAttribute("aria-label", "回程航班");
+  const itineraryOrder = await page.locator("#plan-days").locator(":scope > *").evaluateAll((items) =>
+    items.map((item) => item.className),
+  );
+  expect(itineraryOrder[0]).toContain("itinerary-flight--departure");
+  expect(itineraryOrder.at(-1)).toContain("itinerary-flight--return");
+  await expect(page.getByRole("link", { name: "在地圖開啟第 1 天路線 ↗" })).toHaveAttribute("href", /^https:\/\/www\.google\.com\/maps\/dir\//);
 });
 
 for (const destination of destinations) {
@@ -76,6 +84,9 @@ for (const destination of destinations) {
 
     await expect(page.locator("#destination-city")).toHaveText(destination.city);
     await expect(page.locator("#pass-code")).toHaveText(destination.code);
+    await expect(page.locator(".detail-card--flight")).toHaveCount(2);
+    await expect(page.locator(".detail-card--flight").nth(0).locator(".pass__label")).toHaveText("出發");
+    await expect(page.locator(".detail-card--flight").nth(1).locator(".pass__label")).toHaveText("回程");
     await expect(page.locator(".pass__note")).toBeVisible();
     await expect(page.locator("#plan-button")).toBeVisible();
     await expectNoOverflow(page);
@@ -83,7 +94,7 @@ for (const destination of destinations) {
       Promise.all(element.getAnimations().map((animation) => animation.finished)),
     );
     await page.getByRole("button", { name: "查看我們的城市行程" }).click();
-    await expect(page.locator(".day-plan")).toHaveCount(2);
+    await expect(page.locator(".day-plan")).toHaveCount(3);
     await page.locator("#city-plan").evaluate((element) =>
       Promise.all(element.getAnimations().map((animation) => animation.finished)),
     );
