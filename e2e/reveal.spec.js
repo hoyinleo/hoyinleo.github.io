@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { DESTINATIONS } from "../destinations.js";
 
 const storageKey = "potato-private-journey:v1";
 const destinations = [
@@ -95,6 +96,12 @@ for (const destination of destinations) {
     );
     await page.getByRole("button", { name: "查看我們的城市行程" }).click();
     await expect(page.locator(".day-plan")).toHaveCount(3);
+    await expect(page.locator(".meal-plan")).toHaveCount(2);
+    const selectedDestination = DESTINATIONS.find(({ key }) => key === destination.key);
+    await expect(page.locator("#plan-description")).toHaveText(selectedDestination.planIntro);
+    for (const [index, day] of selectedDestination.days.entries()) {
+      await expect(page.locator(".day-plan:not(.day-plan--stay)").nth(index).locator("h3")).toHaveText(day.title);
+    }
     await page.locator("#city-plan").evaluate((element) =>
       Promise.all(element.getAnimations().map((animation) => animation.finished)),
     );

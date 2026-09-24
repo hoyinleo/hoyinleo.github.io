@@ -65,12 +65,61 @@ test("keeps the final asset names and richer trip metadata in sync", () => {
   }
 });
 
+test("includes airport transport on arrival and departure for every destination", () => {
+  for (const destination of DESTINATIONS) {
+    for (const day of ["Saturday", "Sunday"]) {
+      assert.ok(
+        destination.itinerary.some((event) =>
+          event.day === day
+          && event.category.includes("交通")
+          && /機場/.test(`${event.name} ${event.description}`),
+        ),
+        `${destination.city} is missing ${day} airport transport`,
+      );
+    }
+  }
+});
+
 test("provides a relaxed two-day route with map links for every city", () => {
   for (const destination of DESTINATIONS) {
     assert.equal(destination.days.length, 2);
     for (const day of destination.days) {
       assert.ok(day.stops.length >= 1);
+      assert.ok(day.meals.breakfast, `${destination.city} is missing breakfast for ${day.date}`);
+      assert.ok(day.meals.lunch, `${destination.city} is missing lunch for ${day.date}`);
+      assert.ok(day.meals.dinner, `${destination.city} is missing dinner for ${day.date}`);
       assert.match(createMapsUrl(day, destination.city), /^https:\/\/www\.google\.com\/maps\/dir\/\?/);
     }
   }
+});
+
+test("derives expanded day stops from itineraries and includes meal choices", () => {
+  for (const destination of DESTINATIONS) {
+    assert.ok(destination.itinerary.length >= 7, `${destination.city} itinerary is not expanded`);
+    assert.equal(
+      destination.itinerary.some((event) => event.category === "餐飲"),
+      false,
+      `${destination.city} itinerary should leave meals to the meal section`,
+    );
+
+    for (const [index, day] of destination.days.entries()) {
+      const dayName = index === 0 ? "Saturday" : "Sunday";
+      const expectedStops = destination.itinerary.filter(
+        (event) => event.day === dayName,
+      );
+      assert.equal(day.stops.length, expectedStops.length);
+    }
+
+    assert.ok(
+      destination.days.some((day) => day.meals.teatime?.choices?.length),
+      `${destination.city} is missing teatime choices`,
+    );
+  }
+
+  const bangkok = DESTINATIONS.find(({ key }) => key === "bangkok");
+  const spaStop = bangkok.days[1].stops.find(({ name }) => name.includes("SPA"));
+  assert.match(spaStop.note, /Divana Scentuara Spa/);
+  assert.match(spaStop.note, /Let's Relax Spa/);
+  assert.match(spaStop.note, /Panpuri Wellness/);
+  assert.equal(bangkok.days[1].meals.spa, undefined);
 });

@@ -90,6 +90,7 @@ function populateReveal(destination) {
   document.querySelector("#pass-code").textContent = destination.arrival;
   document.querySelector("#pass-city").textContent = destination.city;
   document.querySelector("#plan-city").textContent = destination.city;
+  document.querySelector("#plan-description").textContent = destination.planIntro;
   renderTravelMeta(destination);
   planDays.replaceChildren(
     createFlightBoundary("departure", destination),
@@ -129,7 +130,7 @@ function createFlightBoundary(type, destination) {
 
   const arrow = document.createElement("span");
   arrow.setAttribute("aria-hidden", "true");
-  arrow.textContent = outbound ? "→" : "←";
+  arrow.textContent = outbound ? "→" : "→";
 
   const arrival = document.createElement("div");
   const arrivalCode = document.createElement("strong");
@@ -197,6 +198,8 @@ function createDayPlan(day, city, index) {
     stops.append(item);
   }
 
+  const meals = createMealPlan(day);
+
   const mapLink = document.createElement("a");
   mapLink.className = "map-link";
   mapLink.href = createMapsUrl(day, city);
@@ -204,8 +207,47 @@ function createDayPlan(day, city, index) {
   mapLink.rel = "noreferrer";
   mapLink.textContent = `在地圖開啟第 ${index + 1} 天路線 ↗`;
 
-  article.append(header, stops, mapLink);
+  article.append(header, stops, meals, mapLink);
   return article;
+}
+
+function createMealPlan(day) {
+  const section = document.createElement("section");
+  section.className = "meal-plan";
+  section.setAttribute("aria-label", "用餐安排");
+
+  const heading = document.createElement("h4");
+  heading.textContent = "用餐安排";
+  section.append(heading);
+
+  for (const [key, label] of [["breakfast", "早餐"], ["lunch", "午餐"], ["teatime", "下午茶"], ["dinner", "晚餐"]]) {
+    const meal = day.meals?.[key];
+    if (!meal) continue;
+
+    const item = document.createElement("article");
+    item.className = "meal-plan__item";
+
+    const schedule = document.createElement("div");
+    schedule.className = "meal-plan__schedule";
+    const mealLabel = document.createElement("span");
+    mealLabel.textContent = label;
+    const time = document.createElement("time");
+    time.textContent = meal.time;
+    schedule.append(mealLabel, time);
+
+    const details = document.createElement("div");
+    details.className = "meal-plan__details";
+    const name = document.createElement("strong");
+    name.textContent = meal.name;
+    const note = document.createElement("p");
+    note.textContent = meal.choices?.join(" / ") || meal.note || "";
+    details.append(name, note);
+
+    item.append(schedule, details);
+    section.append(item);
+  }
+
+  return section;
 }
 
 function showReveal(destination, announce = true) {
