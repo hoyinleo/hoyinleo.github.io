@@ -50,7 +50,7 @@ async function beginReveal() {
 
   if (!prefersReducedMotion.matches) {
     const sequence = [...DESTINATIONS, ...DESTINATIONS, destination];
-    for (const item of sequence) {
+    for (const item of [...sequence, ...sequence]) {
       shuffleCode.textContent = item.arrival;
       shuffleCity.textContent = item.city;
       await new Promise((resolve) => window.setTimeout(resolve, 180));
