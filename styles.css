@@ -229,12 +229,20 @@ button { color: inherit; font: inherit; }
   padding: 14px 16px;
 }
 
+.itinerary-flight--return {
+  border-left-color: var(--burgundy);
+}
+
 .itinerary-flight__label {
   color: var(--jade-700);
   font-size: .62rem;
   font-weight: 700;
   grid-column: 1 / -1;
   letter-spacing: .05em;
+}
+
+.itinerary-flight--return .itinerary-flight__label {
+  color: var(--burgundy);
 }
 
 .itinerary-flight__route {
@@ -320,6 +328,58 @@ button { color: inherit; font: inherit; }
 .route-stops div { padding-left: 22px; }
 .route-stops strong { display: block; font-size: .91rem; font-weight: 500; }
 .route-stops p { color: var(--muted); font-size: .78rem; line-height: 1.5; margin: 6px 0 0; }
+
+.meal-plan {
+  border-top: 1px solid #d6dddc;
+  margin-top: 10px;
+  padding-top: 17px;
+}
+
+.meal-plan h4 {
+  color: var(--jade-900);
+  font-size: .7rem;
+  font-weight: 600;
+  margin: 0 0 7px;
+}
+
+.meal-plan__item {
+  border-bottom: 1px solid #e1e6e5;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 48px minmax(0, 1fr);
+  padding: 11px 0;
+}
+
+.meal-plan__schedule span,
+.meal-plan__schedule time {
+  display: block;
+  font-size: .65rem;
+}
+
+.meal-plan__schedule span {
+  color: var(--jade-700);
+  font-weight: 600;
+}
+
+.meal-plan__schedule time {
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.meal-plan__details strong {
+  display: block;
+  font-size: .8rem;
+  font-weight: 500;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.meal-plan__details p {
+  color: var(--muted);
+  font-size: .72rem;
+  line-height: 1.5;
+  margin: 4px 0 0;
+}
 
 @media (max-width: 360px) {
   .itinerary-flight { gap: 10px; padding: 13px 11px; }
