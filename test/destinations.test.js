@@ -5,6 +5,7 @@ import {
   DESTINATIONS,
   STORAGE_KEY,
   chooseDestination,
+  createMapsUrl,
   getOrCreateDestination,
   readStoredDestination,
 } from "../destinations.js";
@@ -52,11 +53,12 @@ test("stores the first choice and restores it without drawing again", () => {
   assert.equal(draws, 1);
 });
 
-test("provides destination details for every city", () => {
+test("provides a relaxed two-day route with map links for every city", () => {
   for (const destination of DESTINATIONS) {
-    assert.ok(destination.city);
-    assert.ok(destination.country);
-    assert.ok(destination.arrival);
-    assert.ok(destination.image);
+    assert.equal(destination.days.length, 2);
+    for (const day of destination.days) {
+      assert.equal(day.stops.length, 3);
+      assert.match(createMapsUrl(day, destination.city), /^https:\/\/www\.google\.com\/maps\/dir\/\?/);
+    }
   }
 });
