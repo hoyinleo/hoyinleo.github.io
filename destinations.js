@@ -75,10 +75,10 @@ export const DESTINATIONS = Object.freeze([
       {
         day: "Saturday",
         time: "15:30 - 17:00",
-        name: "內惟藝術中心 / 港邊風格下午茶",
-        category: "景點/餐飲",
-        description: "前往高美館旁的內惟藝術中心感受純白建築美學，或於港邊享用精緻下午茶。",
-        url: "",
+        name: "哈瑪星鐵道文化園區",
+        category: "景點",
+        description: "以哈瑪星鐵道文化園區為主；可依時間與天氣改走大港橋，或安排旗津夕陽散步。",
+        url: "https://maps.google.com/?q=Hamasen+Railway+Cultural+Park+Kaohsiung",
       },
       {
         day: "Saturday",
@@ -109,8 +109,8 @@ export const DESTINATIONS = Object.freeze([
         time: "13:30 - 15:30",
         name: "高雄市立圖書館總館 & 遠雄 68 樓展望",
         category: "景點",
-        description: "綠建築空中花園圖書館散步，俯瞰亞洲新灣區全景。",
-        url: "",
+        description: "漫步綠建築空中花園圖書館；遠雄 68 樓展望台營運狀況請於出發前確認。",
+        url: "https://maps.google.com/?q=Kaohsiung+Main+Public+Library+Farglory+68+Observatory",
       },
       {
         day: "Sunday",
@@ -118,7 +118,7 @@ export const DESTINATIONS = Object.freeze([
         name: "三多商圈購物 / 購買伴手禮",
         category: "購物",
         description: "採買高雄在地伴手禮（如舊振南、吳寶春麥方店）。",
-        url: "",
+        url: "https://maps.google.com/?q=Sanduo+Shopping+District+Kaohsiung",
       },
       {
         day: "Sunday",
@@ -237,7 +237,7 @@ export const DESTINATIONS = Object.freeze([
         name: "中山站南西商圈 / 赤峰街巷弄選物",
         category: "購物/景點",
         description: "探索台北最紅的赤峰街獨立咖啡館、服飾選品店與古著店。",
-        url: "",
+        url: "https://maps.google.com/?q=Zhongshan+Station+Chifeng+Street+Taipei",
       },
       {
         day: "Sunday",
@@ -253,7 +253,7 @@ export const DESTINATIONS = Object.freeze([
         name: "桃園機場國泰貴賓室休息",
         category: "餐飲/休息",
         description: "享用國泰貴賓室招牌牛肉麵與調酒，準備登機返港。",
-        url: "",
+        url: "https://maps.google.com/?q=Cathay+Pacific+Lounge+Taoyuan+International+Airport",
       },
     ],
     days: itineraryToDays(
@@ -288,7 +288,7 @@ export const DESTINATIONS = Object.freeze([
           breakfast: { time: "06:30", name: "機上早餐 (CX488)", choices: ["CX488 機上早餐", "香港機場寰宇堂貴賓室"] },
           lunch: { time: "11:30", name: "台北經典牛肉麵/小吃", choices: ["永康牛肉麵", "林東芳牛肉麵", "阜杭豆漿 (清晨)", "阿宗麵線"] },
           teatime: { time: "16:00", name: "松菸咖啡小憩", choices: ["CAMA COFFEE ROASTERS 豆留文青", "春水堂 (松菸店)", "一之軒"] },
-          dinner: { time: "19:30", name: "MUME (米芝蓮一星)", choices: ["MUME (歐陸料理)", "RAW (若有預訂)", "Impromptu by Paul Lee", "logy"] },
+          dinner: { time: "19:30", name: "MUME (米芝蓮一星)", choices: ["MUME (歐陸料理)", "logy", "Impromptu by Paul Lee", "Ad Astra"] },
         },
         Sunday: {
           breakfast: { time: "08:30", name: "古早味早餐", choices: ["真芳碳烤吐司", "鼎元豆漿", "豐盛號"] },
@@ -364,7 +364,7 @@ export const DESTINATIONS = Object.freeze([
         name: "泰式頂級 SPA 按摩體驗 (2 小時)",
         category: "休息/體驗",
         description: "搭機返港前安排一次全身精油按摩或泰式古法舒壓，消除疲勞。可選 Divana Scentuara Spa、Let's Relax Spa 或 Panpuri Wellness。",
-        url: "",
+        url: "https://maps.google.com/?q=Divana+Scentuara+Spa+Bangkok",
       },
       {
         day: "Sunday",
@@ -372,7 +372,7 @@ export const DESTINATIONS = Object.freeze([
         name: "Emsphere / EmQuartier 潮牌採購",
         category: "購物",
         description: "曼谷最新開幕奢華潮牌商場逛街兼買伴手禮。",
-        url: "",
+        url: "https://maps.google.com/?q=Emsphere+EmQuartier+Bangkok",
       },
       {
         day: "Sunday",
@@ -415,7 +415,7 @@ export const DESTINATIONS = Object.freeze([
           breakfast: { time: "06:40", name: "機上早餐 (CX705)", choices: ["CX705 機上早餐", "香港機場玉衡堂貴賓室"] },
           lunch: { time: "12:30", name: "Siam 精緻泰菜", choices: ["Nara Thai Cuisine", "Somtum Der (Somtum 涼拌木瓜絲)", "Inter Restaurants (Siam Soi 9)"] },
           teatime: { time: "15:30", name: "河畔/商場下午茶", choices: ["After You Dessert Cafe (蜜糖吐司)", "ChaTraMue (手標泰式奶茶)", "Karmakamet Tearoom"] },
-          dinner: { time: "19:30", name: "Gaa (米芝蓮二星)", choices: ["Gaa (前衛泰/印融合)", "Sorn (南泰料理)", "Le Du", "Paste Bangkok"] },
+          dinner: { time: "19:30", name: "Gaa (米芝蓮二星)", choices: ["Gaa (前衛泰/印融合)", "Nusara", "Le Du", "Paste Bangkok"] },
         },
         Sunday: {
           breakfast: { time: "08:30", name: "酒店奢華自助早餐", choices: ["酒店早餐", "Kay's Boutique Breakfast"] },
@@ -463,10 +463,10 @@ export const DESTINATIONS = Object.freeze([
       {
         day: "Saturday",
         time: "16:30 - 18:30",
-        name: "弘大潮流街區 (Hongdae) / 聖水洞選品店",
+        name: "聖水洞 (Seongsu-dong)",
         category: "購物",
-        description: "年輕潮流服飾、韓系潮牌（如 Gentle Monster, Tamburins）及個性選物店。",
-        url: "https://maps.google.com/?q=Hongdae+Shopping+Street",
+        description: "探索聖水洞潮流街區、韓系品牌與個性選物店。",
+        url: "https://maps.google.com/?q=Seongsu-dong+Shopping+Street+Seoul",
       },
       {
         day: "Saturday",
@@ -478,10 +478,10 @@ export const DESTINATIONS = Object.freeze([
       },
       {
         day: "Sunday",
-        time: "10:30 - 12:30",
+        time: "10:00 - 12:00",
         name: "北村韓屋村 & 三清洞散步",
         category: "景點",
-        description: "漫步傳統韓屋巷弄，拍攝傳統建築與遠眺景福宮視野。",
+        description: "10:00 後進入北村觀光管制區，漫步傳統韓屋巷弄並遠眺景福宮。",
         url: "https://maps.google.com/?cid=15926527581702415770",
       },
       {
@@ -498,7 +498,7 @@ export const DESTINATIONS = Object.freeze([
         name: "仁川機場貴賓室享用美食 & 退稅辦理",
         category: "餐飲/購物",
         description: "辦理 Tax Refund、免稅店最後採購，並於貴賓室休息準備登機。",
-        url: "",
+        url: "https://maps.google.com/?q=Incheon+International+Airport+Lounges",
       },
     ],
     days: itineraryToDays(
@@ -506,10 +506,10 @@ export const DESTINATIONS = Object.freeze([
         {
           day: "Saturday",
           time: "14:30 - 16:30",
-          name: "高速巴士客運站地下街 (GoTo Mall)",
+          name: "聖水洞 (Seongsu-dong)",
           category: "購物",
-          description: "超平民女裝天堂，平價流行衣服集中地。",
-          url: "https://maps.google.com/?q=Express+Bus+Terminal+Underground+Shopping+Center",
+          description: "探索聖水洞潮流街區、韓系品牌與個性選物店。",
+          url: "https://maps.google.com/?q=Seongsu-dong+Shopping+Street+Seoul",
         },
         {
           day: "Saturday",
@@ -521,7 +521,7 @@ export const DESTINATIONS = Object.freeze([
         },
         {
           day: "Sunday",
-          time: "09:30 - 11:30",
+          time: "10:00 - 12:00",
           name: "北村韓屋村",
           category: "景點",
           description: "星期日早晨漫步傳統韓屋巷弄，拍照打卡十分愜意。",
@@ -571,6 +571,11 @@ export function createMapsUrl(day, city) {
   });
   if (places.length > 2) parameters.set("waypoints", places.slice(1, -1).join("|"));
   return `https://www.google.com/maps/dir/?${parameters}`;
+}
+
+export function createPlaceMapsUrl(place, city) {
+  const parameters = new URLSearchParams({ api: "1", query: `${place}, ${city}` });
+  return `https://www.google.com/maps/search/?${parameters}`;
 }
 
 export function getDestination(key) {

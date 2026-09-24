@@ -1,4 +1,4 @@
-import { createMapsUrl, DESTINATIONS, getOrCreateDestination, readStoredDestination } from "./destinations.js";
+import { createMapsUrl, createPlaceMapsUrl, DESTINATIONS, getOrCreateDestination, readStoredDestination } from "./destinations.js";
 
 const experience = document.querySelector(".experience");
 const revealButton = document.querySelector("#reveal-button");
@@ -8,6 +8,7 @@ const announcement = document.querySelector("#announcement");
 const planButton = document.querySelector("#plan-button");
 const cityPlan = document.querySelector("#city-plan");
 const planDays = document.querySelector("#plan-days");
+const planDestinationSelect = document.querySelector("#plan-destination");
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 let activeDestination = null;
@@ -89,9 +90,16 @@ function populateReveal(destination) {
   document.querySelector("#destination-line").textContent = destination.line;
   document.querySelector("#pass-code").textContent = destination.arrival;
   document.querySelector("#pass-city").textContent = destination.city;
+  renderTravelMeta(destination);
+  renderCityPlan(destination);
+  cityPlan.hidden = true;
+  planButton.setAttribute("aria-expanded", "false");
+}
+
+function renderCityPlan(destination) {
+  planDestinationSelect.value = destination.key;
   document.querySelector("#plan-city").textContent = destination.city;
   document.querySelector("#plan-description").textContent = destination.planIntro;
-  renderTravelMeta(destination);
   planDays.replaceChildren(
     createFlightBoundary("departure", destination),
     ...destination.days.flatMap((day, index) => [
@@ -100,8 +108,6 @@ function populateReveal(destination) {
     ]).filter(Boolean),
     createFlightBoundary("return", destination),
   );
-  cityPlan.hidden = true;
-  planButton.setAttribute("aria-expanded", "false");
 }
 
 function createFlightBoundary(type, destination) {
@@ -193,12 +199,25 @@ function createDayPlan(day, city, index) {
     name.textContent = stop.name;
     const note = document.createElement("p");
     note.textContent = stop.note;
-    details.append(name, note);
+    const titleRow = document.createElement("div");
+    titleRow.className = "route-stop-heading";
+    titleRow.append(name);
+    if (stop.url) {
+      const mapLink = document.createElement("a");
+      mapLink.className = "route-stop-map";
+      mapLink.href = stop.url;
+      mapLink.target = "_blank";
+      mapLink.rel = "noreferrer";
+      mapLink.setAttribute("aria-label", `在 Google 地圖查看 ${stop.name}`);
+      mapLink.textContent = "↗";
+      titleRow.append(mapLink);
+    }
+    details.append(titleRow, note);
     item.append(time, details);
     stops.append(item);
   }
 
-  const meals = createMealPlan(day);
+  const meals = createMealPlan(day, city);
 
   const mapLink = document.createElement("a");
   mapLink.className = "map-link";
@@ -211,7 +230,7 @@ function createDayPlan(day, city, index) {
   return article;
 }
 
-function createMealPlan(day) {
+function createMealPlan(day, city) {
   const section = document.createElement("section");
   section.className = "meal-plan";
   section.setAttribute("aria-label", "用餐安排");
@@ -240,7 +259,21 @@ function createMealPlan(day) {
     const name = document.createElement("strong");
     name.textContent = meal.name;
     const note = document.createElement("p");
-    note.textContent = meal.choices?.join(" / ") || meal.note || "";
+    if (meal.choices?.length) {
+      meal.choices.forEach((choice, index) => {
+        if (index > 0) note.append(" / ");
+        const mapLink = document.createElement("a");
+        mapLink.className = "meal-plan__map-link";
+        mapLink.href = createPlaceMapsUrl(choice, city);
+        mapLink.target = "_blank";
+        mapLink.rel = "noreferrer";
+        mapLink.textContent = choice;
+        mapLink.setAttribute("aria-label", `在 Google 地圖查看 ${choice}`);
+        note.append(mapLink);
+      });
+    } else {
+      note.textContent = meal.note || "";
+    }
     details.append(name, note);
 
     item.append(schedule, details);
@@ -283,6 +316,19 @@ planButton.addEventListener("click", () => {
   cityPlan.hidden = false;
   planButton.setAttribute("aria-expanded", "true");
   cityPlan.scrollIntoView({ behavior: prefersReducedMotion.matches ? "auto" : "smooth" });
+});
+
+planDestinationSelect.replaceChildren(...DESTINATIONS.map((destination) => {
+  const option = document.createElement("option");
+  option.value = destination.key;
+  option.textContent = destination.city;
+  return option;
+}));
+planDestinationSelect.addEventListener("change", () => {
+  const destination = DESTINATIONS.find(({ key }) => key === planDestinationSelect.value);
+  if (!destination) return;
+  renderCityPlan(destination);
+  announcement.textContent = `正在查看${destination.city}的行程，已確認目的地保持不變。`;
 });
 
 revealButton.addEventListener("click", beginReveal);

@@ -8,6 +8,7 @@ import {
   STORAGE_KEY,
   chooseDestination,
   createMapsUrl,
+  createPlaceMapsUrl,
   getOrCreateDestination,
   readStoredDestination,
 } from "../destinations.js";
@@ -89,6 +90,9 @@ test("provides a relaxed two-day route with map links for every city", () => {
       assert.ok(day.meals.lunch, `${destination.city} is missing lunch for ${day.date}`);
       assert.ok(day.meals.dinner, `${destination.city} is missing dinner for ${day.date}`);
       assert.match(createMapsUrl(day, destination.city), /^https:\/\/www\.google\.com\/maps\/dir\/\?/);
+      const placeUrl = new URL(createPlaceMapsUrl(day.stops[0].name, destination.city));
+      assert.equal(placeUrl.pathname, "/maps/search/");
+      assert.equal(placeUrl.searchParams.get("query"), `${day.stops[0].name}, ${destination.city}`);
     }
   }
 });
@@ -122,4 +126,32 @@ test("derives expanded day stops from itineraries and includes meal choices", ()
   assert.match(spaStop.note, /Let's Relax Spa/);
   assert.match(spaStop.note, /Panpuri Wellness/);
   assert.equal(bangkok.days[1].meals.spa, undefined);
+
+  const kaohsiung = DESTINATIONS.find(({ key }) => key === "khh");
+  const hamasenStop = kaohsiung.itinerary.find(({ time }) => time === "15:30 - 17:00");
+  assert.equal(hamasenStop.name, "哈瑪星鐵道文化園區");
+  assert.match(hamasenStop.description, /大港橋.*旗津夕陽散步/);
+  assert.match(
+    kaohsiung.itinerary.find(({ name }) => name.includes("高雄市立圖書館")).description,
+    /營運狀況請於出發前確認/,
+  );
+
+  const taipei = DESTINATIONS.find(({ key }) => key === "taipei");
+  assert.deepEqual(taipei.days[0].meals.dinner.choices, [
+    "MUME (歐陸料理)",
+    "logy",
+    "Impromptu by Paul Lee",
+    "Ad Astra",
+  ]);
+
+  assert.ok(bangkok.days[0].meals.dinner.choices.includes("Nusara"));
+  assert.equal(bangkok.days[0].meals.dinner.choices.some((choice) => choice.includes("Sorn")), false);
+
+  const seoul = DESTINATIONS.find(({ key }) => key === "seoul");
+  assert.equal(
+    seoul.itinerary.find(({ name }) => name.includes("北村韓屋村")).time,
+    "10:00 - 12:00",
+  );
+  assert.equal(seoul.itinerary.some(({ name }) => name.includes("GoTo Mall")), false);
+  assert.ok(seoul.days[0].stops.some(({ name }) => name.includes("聖水洞")));
 });
