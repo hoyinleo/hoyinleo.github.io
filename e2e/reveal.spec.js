@@ -3,7 +3,8 @@ import { expect, test } from "@playwright/test";
 const storageKey = "potato-private-journey:v1";
 const destinations = [
   { key: "seoul", city: "首爾", code: "ICN" },
-  { key: "taichung", city: "台中", code: "RMQ" },
+  { key: "taipei", city: "台北", code: "TPE" },
+  { key: "khh", city: "高雄", code: "KHH" },
   { key: "bangkok", city: "曼谷", code: "BKK" },
 ];
 

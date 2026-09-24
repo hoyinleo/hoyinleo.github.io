@@ -19,9 +19,9 @@ function createStorage(initialValue = null) {
   };
 }
 
-test("maps random values to all three destinations", () => {
+test("maps random values to all four destinations", () => {
   assert.deepEqual(
-    [0, 1, 2].map((value) => chooseDestination((target) => { target[0] = value; }).key),
+    [0, 1, 2, 3].map((value) => chooseDestination((target) => { target[0] = value; }).key),
     DESTINATIONS.map(({ key }) => key),
   );
 });
@@ -45,9 +45,9 @@ test("stores the first choice and restores it without drawing again", () => {
   const first = getOrCreateDestination(storage, randomValues);
   const second = getOrCreateDestination(storage, randomValues);
 
-  assert.equal(first.destination.key, "taichung");
+  assert.equal(first.destination.key, "taipei");
   assert.equal(first.restored, false);
-  assert.equal(second.destination.key, "taichung");
+  assert.equal(second.destination.key, "taipei");
   assert.equal(second.restored, true);
   assert.equal(draws, 1);
 });
