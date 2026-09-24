@@ -31,13 +31,12 @@ test("reveals once and restores the locked destination", async ({ page }) => {
   await expect(page.locator(".reveal")).toBeVisible();
   await expectNoOverflow(page);
 
-  await page.getByRole("button", { name: "查看我們的城市行程" }).click();
-  await expect(page.getByRole("heading", { name: /慢慢走就好/ })).toBeVisible();
-  await expect(page.getByRole("link", { name: "在地圖開啟第 1 天路線 ↗" })).toHaveAttribute("href", /^https:\/\/www\.google\.com\/maps\/dir\/\?/);
+  await expect(page.locator("#plan-button")).toHaveCount(0);
+  await expect(page.locator("#city-plan")).toHaveCount(0);
 });
 
 for (const destination of destinations) {
-  test(`${destination.city} pass fits a large iPhone`, async ({ page }) => {
+  test(`${destination.city} destination fits a large iPhone`, async ({ page }) => {
     await page.setViewportSize({ width: 430, height: 932 });
     await page.addInitScript(({ key, value }) => {
       localStorage.setItem(key, value);
@@ -50,16 +49,8 @@ for (const destination of destinations) {
     await expect(page.locator("#destination-city")).toHaveText(destination.city);
     await expect(page.locator("#pass-code")).toHaveText(destination.code);
     await expect(page.getByText("週末小旅行 · 航班詳情稍後公布")).toBeVisible();
-    await expect(page.getByRole("button", { name: "查看我們的城市行程" })).toBeVisible();
+    await expect(page.locator("#plan-button")).toHaveCount(0);
     await expectNoOverflow(page);
-    await page.locator(".actions").evaluate((element) =>
-      Promise.all(element.getAnimations().map((animation) => animation.finished)),
-    );
-    await page.getByRole("button", { name: "查看我們的城市行程" }).click();
-    await expect(page.locator(".day-plan")).toHaveCount(2);
-    await page.locator("#city-plan").evaluate((element) =>
-      Promise.all(element.getAnimations().map((animation) => animation.finished)),
-    );
     await page.screenshot({ path: `test-results/${destination.key}.png`, fullPage: true });
   });
 }
