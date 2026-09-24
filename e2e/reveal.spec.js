@@ -2,10 +2,10 @@ import { expect, test } from "@playwright/test";
 
 const storageKey = "potato-private-journey:v1";
 const destinations = [
-  { key: "seoul", city: "首爾", code: "ICN" },
-  { key: "taipei", city: "台北", code: "TPE" },
-  { key: "khh", city: "高雄", code: "KHH" },
-  { key: "bangkok", city: "曼谷", code: "BKK" },
+  { key: "khh", city: "高雄 (Kaohsiung)", code: "KHH" },
+  { key: "taipei", city: "台北 (Taipei)", code: "TPE" },
+  { key: "bangkok", city: "曼谷 (Bangkok)", code: "BKK" },
+  { key: "seoul", city: "首爾 (Seoul)", code: "ICN" },
 ];
 
 async function expectNoOverflow(page) {
