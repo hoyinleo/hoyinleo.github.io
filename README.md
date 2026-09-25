@@ -1,6 +1,6 @@
 # Potato's Birthday Trip
 
-A mobile-first birthday check-in that permanently reveals Seoul, Taipei, Kaohsiung, or Bangkok, followed by a relaxed two-day city route with live Google Maps directions.
+A mobile-first birthday check-in that permanently reveals Seoul, Taipei, Kaohsiung, or Bangkok, followed by a relaxed two-day city route with configurable map links.
 
 ## Preview
 

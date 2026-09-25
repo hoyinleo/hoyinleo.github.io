@@ -7,8 +7,6 @@ import {
   DESTINATIONS,
   STORAGE_KEY,
   chooseDestination,
-  createMapsUrl,
-  createPlaceMapsUrl,
   getOrCreateDestination,
   readStoredDestination,
 } from "../destinations.js";
@@ -23,11 +21,8 @@ function createStorage(initialValue = null) {
   };
 }
 
-test("maps random values to all four destinations", () => {
-  assert.deepEqual(
-    [0, 1, 2, 3].map((value) => chooseDestination((target) => { target[0] = value; }).key),
-    DESTINATIONS.map(({ key }) => key),
-  );
+test("uses Seoul as the fixed destination", () => {
+  assert.equal(chooseDestination().key, "seoul");
 });
 
 test("rejects malformed and unknown stored values", () => {
@@ -38,22 +33,26 @@ test("rejects malformed and unknown stored values", () => {
   );
 });
 
-test("stores the first choice and restores it without drawing again", () => {
+test("stores and restores the fixed destination", () => {
   const storage = createStorage();
-  let draws = 0;
-  const randomValues = (target) => {
-    draws += 1;
-    target[0] = 1;
-  };
 
-  const first = getOrCreateDestination(storage, randomValues);
-  const second = getOrCreateDestination(storage, randomValues);
+  const first = getOrCreateDestination(storage);
+  const second = getOrCreateDestination(storage);
 
-  assert.equal(first.destination.key, "taipei");
+  assert.equal(first.destination.key, "seoul");
   assert.equal(first.restored, false);
-  assert.equal(second.destination.key, "taipei");
+  assert.equal(second.destination.key, "seoul");
   assert.equal(second.restored, true);
-  assert.equal(draws, 1);
+});
+
+test("migrates a previously saved destination to Seoul", () => {
+  const storage = createStorage(JSON.stringify({ version: 1, destination: "taipei" }));
+
+  const result = getOrCreateDestination(storage);
+
+  assert.equal(result.destination.key, "seoul");
+  assert.equal(result.restored, true);
+  assert.equal(readStoredDestination(storage).key, "seoul");
 });
 
 test("keeps the final asset names and richer trip metadata in sync", () => {
@@ -81,7 +80,7 @@ test("includes airport transport on arrival and departure for every destination"
   }
 });
 
-test("provides a relaxed two-day route with map links for every city", () => {
+test("accepts explicit map URLs for routes, stops, and meal choices", () => {
   for (const destination of DESTINATIONS) {
     assert.equal(destination.days.length, 2);
     for (const day of destination.days) {
@@ -89,17 +88,23 @@ test("provides a relaxed two-day route with map links for every city", () => {
       assert.ok(day.meals.breakfast, `${destination.city} is missing breakfast for ${day.date}`);
       assert.ok(day.meals.lunch, `${destination.city} is missing lunch for ${day.date}`);
       assert.ok(day.meals.dinner, `${destination.city} is missing dinner for ${day.date}`);
-      assert.match(createMapsUrl(day, destination.city), /^https:\/\/www\.google\.com\/maps\/dir\/\?/);
-      const placeUrl = new URL(createPlaceMapsUrl(day.stops[0].name, destination.city));
-      assert.equal(placeUrl.pathname, "/maps/search/");
-      assert.equal(placeUrl.searchParams.get("query"), `${day.stops[0].name}, ${destination.city}`);
+      assert.equal(typeof day.url, "string");
+      for (const stop of day.stops) assert.equal(typeof stop.url, "string");
+      for (const meal of Object.values(day.meals)) {
+        for (const choice of meal.choices || []) {
+          if (typeof choice !== "string") {
+            assert.equal(typeof choice.name, "string");
+            if (choice.url !== undefined) assert.equal(typeof choice.url, "string");
+          }
+        }
+      }
     }
   }
 });
 
 test("derives expanded day stops from itineraries and includes meal choices", () => {
   for (const destination of DESTINATIONS) {
-    assert.ok(destination.itinerary.length >= 7, `${destination.city} itinerary is not expanded`);
+    assert.ok(destination.itinerary.length >= 6, `${destination.city} itinerary is not expanded`);
     assert.equal(
       destination.itinerary.some((event) => event.category === "餐飲"),
       false,
@@ -148,10 +153,16 @@ test("derives expanded day stops from itineraries and includes meal choices", ()
   assert.equal(bangkok.days[0].meals.dinner.choices.some((choice) => choice.includes("Sorn")), false);
 
   const seoul = DESTINATIONS.find(({ key }) => key === "seoul");
-  assert.equal(
-    seoul.itinerary.find(({ name }) => name.includes("北村韓屋村")).time,
-    "10:00 - 12:00",
+  const seoulDinnerChoices = seoul.days[0].meals.dinner.choices;
+  assert.deepEqual(
+    seoulDinnerChoices.map(({ name }) => name),
+    ["Bangida Ikseon", "Ikseonaetteut"],
   );
+  for (const choice of seoulDinnerChoices) {
+    assert.match(choice.url, /^https:\/\/www\.google\.com\/maps\/search\//);
+  }
+  const seoulFlexibleStop = seoul.itinerary.find(({ name }) => name.includes("北村韓屋"));
+  assert.equal(seoulFlexibleStop.time, "10:00 - 15:30");
   assert.equal(seoul.itinerary.some(({ name }) => name.includes("GoTo Mall")), false);
   assert.ok(seoul.days[0].stops.some(({ name }) => name.includes("聖水洞")));
 });
