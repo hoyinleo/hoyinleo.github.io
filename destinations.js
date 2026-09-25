@@ -1,6 +1,6 @@
 export const STORAGE_KEY = "potato-private-journey:v1";
 
-function itineraryToDays(itinerary, meals = {}, titles = {}) {
+function itineraryToDays(itinerary, meals = {}, titles = {}, urls = {}) {
   const grouped = new Map();
 
   // 1. 初始化星期六與星期日
@@ -8,12 +8,14 @@ function itineraryToDays(itinerary, meals = {}, titles = {}) {
     Saturday: {
       date: "星期六 · 9月26日",
       title: titles.Saturday || "週六行程",
+      url: urls.Saturday || "",
       meals: meals.Saturday || {},
       stops: [],
     },
     Sunday: {
       date: "星期日 · 9月27日",
       title: titles.Sunday || "週日行程",
+      url: urls.Sunday || "",
       meals: meals.Sunday || {},
       stops: [],
     },
@@ -439,50 +441,42 @@ export const DESTINATIONS = Object.freeze([
       backup: "CX410 / CX411",
     },
     line: "霓虹夜色、安靜早晨，還有值得慢慢探索的街區。",
-    planIntro: "從明洞與弘大一路逛到北村，穿梭韓屋巷弄，再享受一頓韓式精緻晚餐。",
+    planIntro: "入住仁寺洞心臟地帶，首日深度探索聖水洞潮牌，次日根據戰利品彈性切換明洞掃貨或北村漫步。",
     image: "./assets/seoul.jpg",
     focalPoint: "58% center",
-    hotel_area: "清潭洞 / 江南區，或 弘大 / 明洞周邊（方便掃貨及前往高級餐廳）",
+    hotel_area: "宜必思首爾仁寺洞大使酒店 (Ibis Ambassador Seoul Insadong)",
     itinerary: [
       {
         day: "Saturday",
         time: "12:30 - 14:00",
-        name: "入境首爾 & 搭乘 AREX 機場快線至市區飯店",
+        name: "入境首爾 & 搭乘 AREX 前往宜必思仁寺洞飯店",
         category: "交通",
-        description: "抵達仁川機場 (ICN) 後搭乘直通列車至首爾站，再轉乘地鐵至飯店寄行李。",
-        url: "",
+        description: "抵達仁川機場 (ICN) 後搭乘直通列車至首爾站，轉乘地鐵/計程車至飯店 Check-in 或寄放行李。",
+        url: "https://www.google.com/maps/search/?api=1&query=Ibis+Ambassador+Seoul+Insadong",
       },
       {
         day: "Saturday",
-        time: "15:00 - 16:30",
-        name: "Olive Young 明洞旗艦店 (K-Beauty)",
+        time: "14:30 - 18:30",
+        name: "聖水洞深度潮流購物 (Seongsu-dong)",
         category: "購物",
-        description: "美妝護膚旗艦店，貨源最齊，現場提供即時退稅服務。",
-        url: "https://maps.google.com/?q=Olive+Young+Myeongdong+Town",
-      },
-      {
-        day: "Saturday",
-        time: "16:30 - 18:30",
-        name: "聖水洞 (Seongsu-dong)",
-        category: "購物",
-        description: "探索聖水洞潮流街區、韓系品牌與個性選物店。",
-        url: "https://maps.google.com/?q=Seongsu-dong+Shopping+Street+Seoul",
+        description: "探索聖水洞潮流街區、韓系美妝/服飾品牌 (Ader Error, Tamburins, fwee) 與個性選物店。",
+        url: "https://www.google.com/maps/search/?api=1&query=Seongsu-dong+Seoul",
       },
       {
         day: "Saturday",
         time: "18:30 - 19:30",
-        name: "返回飯店換裝 & 前往江南區",
+        name: "返回飯店換裝 & 前往晚宴地點",
         category: "交通/休息",
-        description: "回飯店整理戰利品並稍作休息換裝，搭車前往清潭洞 Mingles。",
-        url: "",
+        description: "回飯店整理戰利品稍作休息換裝，搭車前往晚宴地點（建議可現場登記/排隊的高品質韓牛或烤肉）。",
+        url: "https://www.google.com/maps/search/?api=1&query=Ibis+Ambassador+Seoul+Insadong",
       },
       {
         day: "Sunday",
-        time: "10:00 - 12:00",
-        name: "北村韓屋村 & 三清洞散步",
-        category: "景點",
-        description: "10:00 後進入北村觀光管制區，漫步傳統韓屋巷弄並遠眺景福宮。",
-        url: "https://maps.google.com/?cid=15926527581702415770",
+        time: "10:00 - 15:30",
+        name: "彈性行程：明洞美妝掃貨 OR 北村韓屋漫步",
+        category: "景點/購物",
+        description: "若 Day 1 戰利品不足則前往明洞旗艦店補貨；若已滿足則前往北村韓屋村與三清洞悠閒散步。",
+        url: "https://www.google.com/maps/search/?api=1&query=Bukchon+Hanok+Village+Seoul",
       },
       {
         day: "Sunday",
@@ -490,7 +484,7 @@ export const DESTINATIONS = Object.freeze([
         name: "搭乘 AREX 直通列車前往仁川機場",
         category: "交通",
         description: "返飯店取行李後前往首爾站搭乘 AREX 直達仁川機場（預留 2.5 小時機場時間）。",
-        url: "",
+        url: "https://www.google.com/maps/search/?api=1&query=Seoul+Station",
       },
       {
         day: "Sunday",
@@ -498,56 +492,125 @@ export const DESTINATIONS = Object.freeze([
         name: "仁川機場貴賓室享用美食 & 退稅辦理",
         category: "餐飲/購物",
         description: "辦理 Tax Refund、免稅店最後採購，並於貴賓室休息準備登機。",
-        url: "https://maps.google.com/?q=Incheon+International+Airport+Lounges",
+        url: "https://www.google.com/maps/search/?api=1&query=Incheon+International+Airport+Terminal+1",
       },
     ],
     days: itineraryToDays(
       [
         {
           day: "Saturday",
-          time: "14:30 - 16:30",
+          time: "14:30 - 18:30",
           name: "聖水洞 (Seongsu-dong)",
           category: "購物",
           description: "探索聖水洞潮流街區、韓系品牌與個性選物店。",
-          url: "https://maps.google.com/?q=Seongsu-dong+Shopping+Street+Seoul",
-        },
-        {
-          day: "Saturday",
-          time: "16:30 - 18:30",
-          name: "弘大購物街",
-          category: "購物",
-          description: "年輕潮流服飾、韓系潮牌及個性小店街區。",
-          url: "https://maps.google.com/?q=Hongdae+Shopping+Street",
+          url: "https://www.google.com/maps/search/?api=1&query=Seongsu-dong+Seoul",
         },
         {
           day: "Sunday",
-          time: "10:00 - 12:00",
-          name: "北村韓屋村",
-          category: "景點",
-          description: "星期日早晨漫步傳統韓屋巷弄，拍照打卡十分愜意。",
-          url: "https://maps.google.com/?cid=15926527581702415770",
+          time: "10:00 - 15:30",
+          name: "北村韓屋村 / 明洞商圈（彈性二選一）",
+          category: "景點/購物",
+          description: "視乎前一日購物成果，選擇去明洞 Olive Young 旗艦店掃貨或漫步北村韓屋村。",
+          url: "https://www.google.com/maps/search/?api=1&query=Bukchon+Hanok+Village+Seoul",
         },
       ],
       {
         Saturday: {
-          breakfast: { time: "06:30", name: "機上早餐 (CX434)", choices: ["CX434 機上早餐", "香港機場貴賓室"] },
-          lunch: { time: "14:00", name: "首爾暖胃午餐", choices: ["神仙雪濃湯 (明洞店)", "本粥 (Bonjuk)", "明洞餃子 (刀削麵)"] },
-          teatime: { time: "17:00", name: "韓系網美咖啡廳", choices: ["Cafe Layered (弘大/安國)", "Nudake (聖水/狎鷗亭)", "Mil Toast (益善洞)"] },
-          dinner: { time: "19:30", name: "Mingles (米芝蓮三星)", choices: ["Mingles (新派韓餐)", "Jungsik (正食)", "Kwonsooksoo (權熟手)", "La Yeon (羅宴)"] },
+          breakfast: {
+            time: "06:30",
+            name: "機上早餐 (CX434)",
+            choices: [
+              { name: "CX434 機上早餐" }
+            ]
+          },
+        lunch: {
+          time: "14:30",
+          name: "仁寺洞 / 益善洞暖胃午餐（可 Walk-in）",
+          choices: [
+            { name: "里門雪濃湯 (百年老店/步行約6分鐘/翻桌快)", url: "https://www.google.com/maps/search/?api=1&query=Imun+Seolleongtang+Seoul" },
+            { name: "黃生家刀削麵 (米芝蓮必比登/現場排隊)", url: "https://www.google.com/maps/search/?api=1&query=Hwangsaengga+Kalguksu" },
+            { name: "神仙雪濃湯 (明洞店/需搭地鐵或步行約18分鐘)", url: "https://www.google.com/maps/search/?api=1&query=Sinseon+Seolleongtang+Myeongdong" }
+          ]
+        },
+          teatime: {
+            time: "16:30",
+            name: "聖水洞質感 Cafe",
+            choices: [
+              {
+                name: "Cafe Onion Seongsu",
+                url: "https://www.google.com/maps/search/?api=1&query=Cafe+Onion+Seongsu"
+              },
+              {
+                name: "Standard Bread Seongsu",
+                url: "https://www.google.com/maps/search/?api=1&query=Standard+Bread+Seongsu"
+              },
+              {
+                name: "Daelim Changgo Cafe",
+                url: "https://www.google.com/maps/search/?api=1&query=Daelim+Changgo+Seongsu"
+              }
+            ]
+          },
+          dinner: {
+            time: "19:30",
+            name: "益善洞韓屋氛圍 / 新派韓式創意定食",
+            choices: [
+              { name: "Bangida (반기다 / 韓式創意料理 / 必點牛肉餅與辣醬麵)", url: "https://www.google.com/maps/search/?api=1&query=Bangida+Ikseon+Seoul" },
+              { name: "Ikseonaetteut (익선애뜻 / 韓屋簡約風 / 韓式蓋飯與煎餅)", url: "https://www.google.com/maps/search/?api=1&query=Ikseonaetteut+Ikseon+Seoul" }
+            ]
+          },
         },
         Sunday: {
-          breakfast: { time: "09:00", name: "韓屋麵包咖啡廳", choices: ["Onion Anguk", "Artist Bakery (鹽可頌)", "London Bagel Museum (需早起排隊)"] },
-          lunch: { time: "12:30", name: "傳統名店午餐", choices: ["土俗村蔘雞湯", "黃生家刀削麵 (米芝蓮必比登)", "大樹屋宮中藥膳蔘雞湯"] },
-          teatime: { time: "15:00", name: "漢南洞質感下午茶", choices: ["Ader Error Space Cafe", "Anthracite Coffee", "mtl Hannam"] },
-          dinner: { time: "18:00", name: "仁川機場貴賓室", choices: ["Matina Lounge (韓式炸雞/辣炒年糕)", "Asiana Business Lounge", "Sky Hub Lounge"] },
+          breakfast: {
+            time: "09:00",
+            name: "安國 / 益善洞早午餐",
+            choices: [
+              { name: "Dotori Garden (安國希臘優格)", url: "https://www.google.com/maps/search/?api=1&query=Dotori+Garden+Anguk" },
+              { name: "Mil Toast (益善洞蒸吐司)", url: "https://www.google.com/maps/search/?api=1&query=Mil+Toast+Ikseondong" },
+              { name: "Onion Anguk", url: "https://www.google.com/maps/search/?api=1&query=Cafe+Onion+Anguk" },
+              { name: "Artist Bakery", url: "https://www.google.com/maps/search/?api=1&query=Artist+Bakery+Anguk" }
+            ]
+          },
+          lunch: {
+            time: "12:30",
+            name: "在地熱門名店午餐（可 Walk-in / 現場排隊）",
+            choices: [
+              { name: "土俗村參雞湯 (店面大/排隊快)", url: "https://www.google.com/maps/search/?api=1&query=Tosokchon+Samgyetang" },
+              { name: "明洞餃子 (刀削麵/蒸餃/翻桌極快)", url: "https://www.google.com/maps/search/?api=1&query=Myeongdong+Kyoja" },
+              { name: "三清洞麵片湯", url: "https://www.google.com/maps/search/?api=1&query=Samcheongdong+Sujeobi" },
+              { name: "王妃家燒肉 (明洞店)", url: "https://www.google.com/maps/search/?api=1&query=Wangbijib+Myeongdong" }
+            ]
+          },
+          teatime: {
+            time: "15:00",
+            name: "漢南洞 / 益善洞下午茶",
+            choices: [
+              { name: "Lowcoffee Hannam", url: "https://www.google.com/maps/search/?api=1&query=Lowcoffee+Hannam" },
+              { name: "Wet Coffee", url: "https://www.google.com/maps/search/?api=1&query=Wet+Coffee+Hannam" },
+              { name: "Ader Error Space Cafe", url: "https://www.google.com/maps/search/?api=1&query=Ader+Hannam+Space" },
+              { name: "mtl Hannam", url: "https://www.google.com/maps/search/?api=1&query=mtl+Hannam" }
+            ]
+          },
+          dinner: {
+            time: "18:00",
+            name: "仁川機場貴賓室",
+            choices: [
+              { name: "Matina Lounge (韓式炸雞/辣炒年糕)", url: "https://www.google.com/maps/search/?api=1&query=Matina+Lounge+Incheon+Airport" },
+              { name: "Asiana Business Lounge", url: "https://www.google.com/maps/search/?api=1&query=Asiana+Business+Lounge+Incheon+Airport" },
+              { name: "Sky Hub Lounge", url: "https://www.google.com/maps/search/?api=1&query=Sky+Hub+Lounge+Incheon+Airport" }
+            ]
+          },
         },
       },
       {
-        Saturday: "明洞美妝 · 潮流購物 · 三星韓式饗宴",
-        Sunday: "北村韓屋 · 漢南洞設計師品牌 · 仁川返港",
+        Saturday: "聖水潮流探索 · 高質感韓式晚宴",
+        Sunday: "北村韓屋/明洞掃貨 · 益善洞美食 · 仁川返港",
+      },
+      {
+        Saturday: "https://www.google.com/maps/dir/?api=1&destination=Seongsu-dong+Seoul",
+        Sunday: "https://www.google.com/maps/dir/?api=1&destination=Bukchon+Hanok+Village+Seoul"
       }
     ),
-  }),
+  })
 ].map((destination) => {
   const [saturday, sunday] = destination.days;
   return Object.freeze({
@@ -556,27 +619,10 @@ export const DESTINATIONS = Object.freeze([
       destination.itinerary,
       { Saturday: saturday.meals, Sunday: sunday.meals },
       { Saturday: saturday.title, Sunday: sunday.title },
+      { Saturday: saturday.url, Sunday: sunday.url },
     ),
   });
 }));
-
-export function createMapsUrl(day, city) {
-  const places = day.stops.map(({ name }) => `${name}, ${city}`);
-  if (!places.length) return "";
-  const parameters = new URLSearchParams({
-    api: "1",
-    origin: places[0],
-    destination: places.at(-1),
-    travelmode: "transit",
-  });
-  if (places.length > 2) parameters.set("waypoints", places.slice(1, -1).join("|"));
-  return `https://www.google.com/maps/dir/?${parameters}`;
-}
-
-export function createPlaceMapsUrl(place, city) {
-  const parameters = new URLSearchParams({ api: "1", query: `${place}, ${city}` });
-  return `https://www.google.com/maps/search/?${parameters}`;
-}
 
 export function getDestination(key) {
   return DESTINATIONS.find((destination) => destination.key === key) ?? null;
@@ -591,22 +637,15 @@ export function readStoredDestination(storage) {
   }
 }
 
-export function chooseDestination(randomValues = crypto.getRandomValues.bind(crypto)) {
-  const limit = Math.floor(0x100000000 / DESTINATIONS.length) * DESTINATIONS.length;
-  const values = new Uint32Array(1);
-
-  do {
-    randomValues(values);
-  } while (values[0] >= limit);
-
-  return DESTINATIONS[values[0] % DESTINATIONS.length];
+export function chooseDestination() {
+  return getDestination("seoul");
 }
 
-export function getOrCreateDestination(storage, randomValues) {
+export function getOrCreateDestination(storage) {
   const stored = readStoredDestination(storage);
-  if (stored) return { destination: stored, restored: true };
+  const destination = chooseDestination();
+  if (stored?.key === destination.key) return { destination, restored: true };
 
-  const destination = chooseDestination(randomValues);
   try {
     storage.setItem(
       STORAGE_KEY,
@@ -616,5 +655,5 @@ export function getOrCreateDestination(storage, randomValues) {
     console.warn("Unable to save to storage", e);
   }
 
-  return { destination, restored: false };
+  return { destination, restored: Boolean(stored) };
 }
