@@ -1,4 +1,4 @@
-import { createMapsUrl, createPlaceMapsUrl, DESTINATIONS, getOrCreateDestination, readStoredDestination } from "./destinations.js";
+import { DESTINATIONS, getOrCreateDestination, readStoredDestination } from "./destinations.js";
 
 const experience = document.querySelector(".experience");
 const revealButton = document.querySelector("#reveal-button");
@@ -103,7 +103,7 @@ function renderCityPlan(destination) {
   planDays.replaceChildren(
     createFlightBoundary("departure", destination),
     ...destination.days.flatMap((day, index) => [
-      createDayPlan(day, destination.city, index),
+      createDayPlan(day, index),
       index === 0 ? createStayCard(destination) : null,
     ]).filter(Boolean),
     createFlightBoundary("return", destination),
@@ -175,7 +175,7 @@ function createStayCard(destination) {
   return article;
 }
 
-function createDayPlan(day, city, index) {
+function createDayPlan(day, index) {
   const article = document.createElement("article");
   article.className = "day-plan";
 
@@ -217,20 +217,22 @@ function createDayPlan(day, city, index) {
     stops.append(item);
   }
 
-  const meals = createMealPlan(day, city);
+  const meals = createMealPlan(day);
 
-  const mapLink = document.createElement("a");
-  mapLink.className = "map-link";
-  mapLink.href = createMapsUrl(day, city);
-  mapLink.target = "_blank";
-  mapLink.rel = "noreferrer";
-  mapLink.textContent = `在地圖開啟第 ${index + 1} 天路線 ↗`;
-
-  article.append(header, stops, meals, mapLink);
+  article.append(header, stops, meals);
+  if (day.url) {
+    const mapLink = document.createElement("a");
+    mapLink.className = "map-link";
+    mapLink.href = day.url;
+    mapLink.target = "_blank";
+    mapLink.rel = "noreferrer";
+    mapLink.textContent = `在地圖開啟第 ${index + 1} 天路線 ↗`;
+    article.append(mapLink);
+  }
   return article;
 }
 
-function createMealPlan(day, city) {
+function createMealPlan(day) {
   const section = document.createElement("section");
   section.className = "meal-plan";
   section.setAttribute("aria-label", "用餐安排");
@@ -262,14 +264,19 @@ function createMealPlan(day, city) {
     if (meal.choices?.length) {
       meal.choices.forEach((choice, index) => {
         if (index > 0) note.append(" / ");
-        const mapLink = document.createElement("a");
-        mapLink.className = "meal-plan__map-link";
-        mapLink.href = createPlaceMapsUrl(choice, city);
-        mapLink.target = "_blank";
-        mapLink.rel = "noreferrer";
-        mapLink.textContent = choice;
-        mapLink.setAttribute("aria-label", `在 Google 地圖查看 ${choice}`);
-        note.append(mapLink);
+        const choiceName = typeof choice === "string" ? choice : choice.name;
+        if (choice.url) {
+          const mapLink = document.createElement("a");
+          mapLink.className = "meal-plan__map-link";
+          mapLink.href = choice.url;
+          mapLink.target = "_blank";
+          mapLink.rel = "noreferrer";
+          mapLink.textContent = choiceName;
+          mapLink.setAttribute("aria-label", `在 Google 地圖查看 ${choiceName}`);
+          note.append(mapLink);
+        } else {
+          note.append(choiceName);
+        }
       });
     } else {
       note.textContent = meal.note || "";
@@ -334,5 +341,5 @@ planDestinationSelect.addEventListener("change", () => {
 revealButton.addEventListener("click", beginReveal);
 
 const storedDestination = readStoredDestination(localStorage);
-if (storedDestination) showReveal(storedDestination, false);
+if (storedDestination) showReveal(getOrCreateDestination(localStorage).destination, false);
 else setState("invitation");

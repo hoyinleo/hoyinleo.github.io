@@ -54,6 +54,7 @@ test("reveals once and restores the locked destination", async ({ page }) => {
   await expect(page.locator(".reveal")).toBeVisible();
 
   const selectedCity = await page.locator("#destination-city").textContent();
+  await expect(page.locator("#destination-city")).toHaveText("首爾 (Seoul)");
   await page.reload();
   await expect(page.locator("#destination-city")).toHaveText(selectedCity);
   await expect(page.locator(".reveal")).toBeVisible();
@@ -61,6 +62,14 @@ test("reveals once and restores the locked destination", async ({ page }) => {
 
   await page.getByRole("button", { name: "查看我們的城市行程" }).click();
   await expect(page.getByRole("heading", { name: /慢慢走就好/ })).toBeVisible();
+  const stopCopyIsAligned = await page.locator(".route-stops li").evaluateAll((stops) =>
+    stops.every((stop) => {
+      const name = stop.querySelector(".route-stop-heading strong").getBoundingClientRect();
+      const description = stop.querySelector("p").getBoundingClientRect();
+      return Math.abs(name.left - description.left) < 1;
+    }),
+  );
+  expect(stopCopyIsAligned).toBe(true);
   const checkedInDestination = DESTINATIONS.find(({ city }) => city === selectedCity);
   await expect(page.locator("#plan-destination")).toHaveValue(checkedInDestination.key);
   await expect(page.locator(".day-plan--stay")).toBeVisible();
@@ -71,8 +80,6 @@ test("reveals once and restores the locked destination", async ({ page }) => {
   );
   expect(itineraryOrder[0]).toContain("itinerary-flight--departure");
   expect(itineraryOrder.at(-1)).toContain("itinerary-flight--return");
-  await expect(page.getByRole("link", { name: "在地圖開啟第 1 天路線 ↗" })).toHaveAttribute("href", /^https:\/\/www\.google\.com\/maps\/dir\//);
-
   await page.locator("#plan-destination").selectOption("taipei");
   await expect(page.locator("#plan-city")).toContainText("台北");
   await expect(page.locator("#plan-description")).toHaveText(DESTINATIONS.find(({ key }) => key === "taipei").planIntro);
@@ -81,7 +88,7 @@ test("reveals once and restores the locked destination", async ({ page }) => {
 });
 
 for (const destination of destinations) {
-  test(`${destination.city} pass fits a large iPhone`, async ({ page }) => {
+  test(`Seoul pass and ${destination.city} itinerary fit a large iPhone`, async ({ page }) => {
     await page.setViewportSize({ width: 430, height: 932 });
     await page.addInitScript(({ key, value }) => {
       localStorage.setItem(key, value);
@@ -91,8 +98,8 @@ for (const destination of destinations) {
     });
     await page.goto("/");
 
-    await expect(page.locator("#destination-city")).toHaveText(destination.city);
-    await expect(page.locator("#pass-code")).toHaveText(destination.code);
+    await expect(page.locator("#destination-city")).toHaveText("首爾 (Seoul)");
+    await expect(page.locator("#pass-code")).toHaveText("ICN");
     await expect(page.locator(".detail-card--flight")).toHaveCount(2);
     await expect(page.locator(".detail-card--flight").nth(0).locator(".pass__label")).toHaveText("出發");
     await expect(page.locator(".detail-card--flight").nth(1).locator(".pass__label")).toHaveText("回程");
@@ -103,6 +110,7 @@ for (const destination of destinations) {
       Promise.all(element.getAnimations().map((animation) => animation.finished)),
     );
     await page.getByRole("button", { name: "查看我們的城市行程" }).click();
+    await page.locator("#plan-destination").selectOption(destination.key);
     await expect(page.locator(".day-plan")).toHaveCount(3);
     await expect(page.locator(".meal-plan")).toHaveCount(2);
     const selectedDestination = DESTINATIONS.find(({ key }) => key === destination.key);
@@ -113,15 +121,22 @@ for (const destination of destinations) {
       await expect(dayPlan.locator(".route-stop-map")).toHaveCount(
         day.stops.filter(({ url }) => url).length,
       );
+      await expect(dayPlan.locator(".map-link")).toHaveCount(day.url ? 1 : 0);
+      if (day.url) await expect(dayPlan.locator(".map-link")).toHaveAttribute("href", day.url);
       for (const stop of day.stops.filter(({ url }) => url)) {
         await expect(dayPlan.getByRole("link", { name: `在 Google 地圖查看 ${stop.name}` }))
           .toHaveAttribute("href", stop.url);
       }
       await expect(dayPlan.locator(".meal-plan__map-link")).toHaveCount(
-        Object.values(day.meals).reduce((count, meal) => count + (meal.choices?.length || 0), 0),
+        Object.values(day.meals).reduce((count, meal) => count + (meal.choices?.filter((choice) => typeof choice !== "string" && choice.url).length || 0), 0),
       );
-      await expect(dayPlan.locator(".meal-plan__map-link").first())
-        .toHaveAttribute("href", /^https:\/\/www\.google\.com\/maps\/search\//);
+      const linkedChoices = Object.values(day.meals).flatMap((meal) =>
+        (meal.choices || []).filter((choice) => typeof choice !== "string" && choice.url),
+      );
+      for (const choice of linkedChoices) {
+        await expect(dayPlan.getByRole("link", { name: `在 Google 地圖查看 ${choice.name}` }))
+          .toHaveAttribute("href", choice.url);
+      }
     }
     await page.locator("#city-plan").evaluate((element) =>
       Promise.all(element.getAnimations().map((animation) => animation.finished)),
